@@ -1,10 +1,12 @@
 import Header from "./components/Header"
 import Tareas from "./components/Tareas"
 import { useState } from "react"
+import AddTarea from "./components/AddTarea"
 
 function App() {
   
 
+  const [mostrarForm, setMostrarForm] = useState(false)
   const [tareas, setTareas] = useState([
     {
         id: 1,
@@ -20,16 +22,41 @@ function App() {
     },
     {
         id: 3,
-        texto: 'Comprar el súper',
+        texto: 'Ir al súper',
         fecha: '1 diciembre, 2022',
         terminada: false
     }
 ])
 
+//Función de borrar una tarea pasada por Prop
+
+const borrarTarea = (id) => {
+  setTareas(tareas.filter((tarea) => tarea.id !== id))
+}
+
+//Función de cambiar el estatus de la tarea
+
+const marcarTarea = (id) => {
+  console.log(id)
+  setTareas(tareas.map((tarea) => tarea.id === id ? { ...tarea, terminada: !tarea.terminada } : tarea))
+}
+
+//Agregar una tare
+
+const agregarTarea = (tarea) => {
+  console.log(tarea)
+  const id = Math.floor(Math.random() * 10000) + 1
+  const nuevaTarea = {id, ...tarea}
+
+  setTareas([...tareas, nuevaTarea])
+}
+
+
   return (
       <div className='container'>
-       <Header titulo='Tareas' />
-       <Tareas tareas={tareas} />
+        <Header titulo='Tareas' mostrarForm={mostrarForm} onAdd={()=> setMostrarForm(!mostrarForm)} />
+        {mostrarForm && <AddTarea onAdd={agregarTarea} />}
+        {tareas.length > 0 ? <Tareas tareas={tareas} onDelete={borrarTarea} onToggle={marcarTarea} /> : 'No hay tareas que mostrar' }
       </div>
   )
   }
